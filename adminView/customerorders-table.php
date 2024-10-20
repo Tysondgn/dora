@@ -1,13 +1,6 @@
 <?php
 //database conection  file
 include('../config/dbconnection.php');
-// //Code for deletion
-// if (isset($_GET['delid'])) {
-//     $rid = intval($_GET['delid']);
-//     $sql = mysqli_query($conn, "delete from userprofiles where UserID=$rid");
-//     echo "<script>alert('Data deleted');</script>";
-//     echo "<script>window.location.href = 'userprofile-table.php'</script>";
-// }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -198,7 +191,7 @@ include('../config/dbconnection.php');
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-5">
-                            <h2>User <b>Management</b></h2>
+                            <h2>User Order <b>Management</b></h2>
                         </div>
                         <div class="col-sm-7" align="right">
                             <div class="row">
@@ -208,10 +201,10 @@ include('../config/dbconnection.php');
                                         <span>Customer Orders</span>
                                     </a>
                                 </div>
-                               <div class="col">
-                                   <a href="Onlinepayments-read.php" class="btn btn-secondary">
-                                       <i class="material-icons">&#xE147;</i>
-                                       <span>Online Payments</span>
+                                <div class="col">
+                                    <a href="Onlinepayments-read.php" class="btn btn-secondary">
+                                        <i class="material-icons">&#xE147;</i>
+                                        <span>Online Payments</span>
                                     </a>
                                 </div>
                                 <div class="col">
@@ -239,11 +232,14 @@ include('../config/dbconnection.php');
                             <th>Order Time</th>
                             <th>Total Amount</th>
                             <th>Table Number</th>
+                            <th>Table Status</th>
+                            <th>Order</th>
+                            <th>Dish Description</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $ret = mysqli_query($conn, "select * from customerorders");
+                        $ret = mysqli_query($conn, "select * from customerorders ORDER BY OrderID DESC");
                         $cnt = 1;
                         $row = mysqli_num_rows($ret);
                         if ($row > 0) {
@@ -255,7 +251,13 @@ include('../config/dbconnection.php');
                                         <?php echo $cnt; ?>
                                     </td>
                                     <td>
-                                        <?php echo $row['UserId']; ?>
+                                        <?php
+                                        if ($row['UserID']) {
+                                            echo $row['UserID'];
+                                        } else {
+                                            echo 'Guest';
+                                        }
+                                        ?>
                                     </td>
                                     <td>
                                         <?php echo $row['OrderStatus']; ?>
@@ -264,10 +266,58 @@ include('../config/dbconnection.php');
                                         <?php echo $row['OrderTime']; ?>
                                     </td>
                                     <td>
-                                        <?php echo $row['Total Amount']; ?>
+                                        <?php echo $row['TotalAmount']; ?>
                                     </td>
                                     <td>
-                                        <?php echo $row['Table Number']; ?>
+                                        <?php echo $row['TableNumber']; ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $jsonString = trim($row['json_cart']);
+                                        // echo "Raw JSON Data: $jsonString";
+                                
+                                        // Decode the JSON string only once
+                                        $cartdata = json_decode($jsonString, true);
+
+                                        // Check if the decoding was successful
+                                        if (json_last_error() === JSON_ERROR_NONE && is_array($cartdata)) {
+                                            // Check if $cartdata is not empty
+                                            if (!empty($cartdata)) {
+                                                foreach ($cartdata as $itemId => $item) {
+                                                    $name = $item['ItemName'];
+                                                    $price = $item['ItemPrice'];
+                                                    $count = $item['Itemcount'];
+
+                                                    // Output or use the variables as needed
+                                                    // echo " <ul> <li>Name: $name</li><li> Price: $price</li><li> Count: $count</li></ul><br>";
+                                
+                                                    // Output a table row for each item
+                                                    echo '<table border="1">
+                                                             <tr>
+                                                                 <th>Item ID</th>
+                                                                 <th>Name</th>
+                                                                 <th>Price</th>
+                                                                 <th>Count</th>
+                                                             </tr>';
+                                                    echo "<tr>
+                                                            <td>$itemId</td>
+                                                            <td>$name</td>
+                                                            <td>$price</td>
+                                                            <td>$count</td>
+                                                        </tr>";
+                                                    echo '</table>';
+                                                }
+                                            } else {
+                                                echo "No items found in JSON<br>";
+                                            }
+                                        } else {
+                                            // Handle the case when decoding fails
+                                            echo "Error decoding JSON: " . json_last_error_msg();
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $row['PaymentStatus']; ?>
                                     </td>
                                 </tr>
                                 <?php

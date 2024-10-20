@@ -1,10 +1,11 @@
 <?php
 //database conection  file
-include('../config/dbconnection.php');
+include ('../config/dbconnection.php');
 //Code for deletion
-if (isset($_GET['delid'])) {
+if (isset ($_GET['delid'])) {
     $rid = intval($_GET['delid']);
     $sql = mysqli_query($conn, "delete from menuitems where ItemID=$rid");
+    $pricesql = mysqli_query($conn, "delete from menuitemsprice where ItemID=$rid");
     echo "<script>alert('Data deleted');</script>";
     echo "<script>window.location.href = 'menuitems-table.php'</script>";
 }
@@ -194,7 +195,7 @@ if (isset($_GET['delid'])) {
 <body>
 
     <?PHP
-    $query = "SELECT * FROM `menuitems`";
+    $query = "SELECT * FROM `menuitems` ORDER BY ItemID DESC";
     $result = mysqli_query($conn, $query);
     ?>
 
@@ -209,111 +210,148 @@ if (isset($_GET['delid'])) {
                         <div class="col-sm-7" align="right">
                             <div class="row">
                                 <div class="col">
+                                    <a href="../adminpanel.php" class="btn btn-secondary">
+                                        <i class="material-icons">&#xE147;</i><br>
+                                        <span>Admin Dashboard</span>
+                                    </a>
+                                </div>
+                                <div class="col">
                                     <a href="customerorders-table.php" class="btn btn-secondary">
-                                        <i class="material-icons">&#xE147;</i>
+                                        <i class="material-icons">&#xE147;</i><br>
                                         <span>Customer Orders</span>
                                     </a>
                                 </div>
                                 <div class="col">
                                     <a href="Onlinepayments-read.php" class="btn btn-secondary">
-                                        <i class="material-icons">&#xE147;</i>
+                                        <i class="material-icons">&#xE147;</i><br>
                                         <span>Online Payments</span>
                                     </a>
                                 </div>
                                 <div class="col">
                                     <a href="menuitems-insert.php" class="btn btn-secondary">
-                                        <i class="material-icons">&#xE147;</i>
-                                        <span>Add New Menu Item</span></a>
+                                        <i class="material-icons">&#xE147;</i><br>
+                                        <span>Add New Menu Items</span>
+                                    </a>
                                 </div>
                                 <div class="col">
                                     <a href="userprofile-table.php" class="btn btn-secondary">
-                                        <i class="material-icons">&#xE147;</i>
+                                        <i class="material-icons">&#xE147;</i><br>
                                         <span>User Details</span>
                                     </a>
                                 </div>
+                            </div>                            
+                            <!-- Search box start -->
+                            <div class="search-box w-100">
+                                <div class="input-group w-100">
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+                                    <div class="input-group-addon"><i class="material-icons">&#xE8B6;</i></div>
+                                </div>
                             </div>
+                            <!-- Search box end -->
                         </div>
                     </div>
                 </div>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Description</th>
-                            <th>Preparation Time</th>
-                            <th>Image</th>
-                            <th>Video URL</th>
-                            <th>Cuisine</th>
-                            <th>Category</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $cnt = 1;
-                        while ($row = mysqli_fetch_array($result)) {
-                            ?>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
                             <tr>
-                                <td>
-                                    <?php echo $cnt; ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['ItemName']; ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['Price']; ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['Description']; ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['PreparationTime']; ?> Minutes
-                                </td>
-                                <td>
-                                    <?php
-                                    if (!empty($row['ImageURL'])) {
-                                        echo '<img src="' . $row['ImageURL'] . '" alt="Item Image" style="width:100px;height:auto;">';
-                                    } else {
-                                        echo 'No Image';
-                                    }
-                                    ?>
-                                </td>
-                                <td>
-                                    <video width="320" height="240" controls>
-                                        <source src="<?php echo $row['VideoURL']; ?>" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                </td>
-
-                                <td>
-                                    <?php echo $row['cuisine']; ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['category']; ?>
-                                </td>
-                                <td>
-                                    <a href="menuitems-read.php?viewid=<?php echo htmlentities($row['ItemID']); ?>"
-                                        class="view" title="View" data-toggle="tooltip"><i
-                                            class="material-icons">&#xE417;</i></a>
-                                    <a href="menuitems-edit.php?editid=<?php echo htmlentities($row['ItemID']); ?>"
-                                        class="edit" title="Edit" data-toggle="tooltip"><i
-                                            class="material-icons">&#xE254;</i></a>
-                                    <a href="menuitems-table.php?delid=<?php echo ($row['ItemID']); ?>" class="delete"
-                                        title="Delete" data-toggle="tooltip"
-                                        onclick="return confirm('Do you really want to Delete?');"><i
-                                            class="material-icons">&#xE872;</i></a>
-                                </td>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Description</th>
+                                <th>Preparation Time</th>
+                                <th>Image</th>
+                                <th>Video URL</th>
+                                <th>Cuisine</th>
+                                <th>Category</th>
+                                <th>Action</th>
                             </tr>
+                        </thead>
+                        <tbody>
                             <?php
-                            $cnt = $cnt + 1;
-                        } ?>
-                    </tbody>
-                </table>
+                            $cnt = 1;
+                            while ($row = mysqli_fetch_array($result)) {
+                                ?>
+                                <tr>
+                                    <td>
+                                        <?php echo $cnt; ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $row['ItemName']; ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $itemid = $row['ItemID'];
+                                        $Query = "SELECT Price,ItemSize FROM menuitemsprice WHERE ItemID = '$itemid'";
+                                        $priceresult = mysqli_query($conn, $Query);
+                                        while ($pricerow = mysqli_fetch_assoc($priceresult)) {
+                                            echo $pricerow['ItemSize'] . " ";
+                                            echo "Price : " . $pricerow['Price'] . "<br><br>";
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $row['Description']; ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $row['PreparationTime']; ?> Minutes
+                                    </td>
+                                    <td>
+                                        <?php
+                                        if (!empty ($row['ImageURL'])) {
+                                            echo '<img src="' . $row['ImageURL'] . '" alt="Item Image" style="width:100px;height:auto;">';
+                                        } else {
+                                            echo 'No Image';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <video width="320" height="240" controls>
+                                            <source src="<?php echo $row['VideoURL']; ?>" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </td>
+
+                                    <td>
+                                        <?php echo $row['cuisine']; ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $row['category']; ?>
+                                    </td>
+                                    <td>
+                                        <a href="menuitems-read.php?viewid=<?php echo htmlentities($row['ItemID']); ?>"
+                                            class="view" title="View" data-toggle="tooltip"><i
+                                                class="material-icons">&#xE417;</i></a>
+                                        <a href="menuitems-edit.php?editid=<?php echo htmlentities($row['ItemID']); ?>"
+                                            class="edit" title="Edit" data-toggle="tooltip"><i
+                                                class="material-icons">&#xE254;</i></a>
+                                        <a href="menuitems-table.php?delid=<?php echo ($row['ItemID']); ?>" class="delete"
+                                            title="Delete" data-toggle="tooltip"
+                                            onclick="return confirm('Do you really want to Delete?');"><i
+                                                class="material-icons">&#xE872;</i></a>
+                                    </td>
+                                </tr>
+                                <?php
+                                $cnt = $cnt + 1;
+                            } ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#searchInput').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('table tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>
