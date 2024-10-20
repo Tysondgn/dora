@@ -18,6 +18,9 @@ include "config/dbconnection.php";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
+    <!-- Bootstrap Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link href="assets/css/login.css" rel="stylesheet">
     <title>Welcome, Admin</title>
 </head>
@@ -25,15 +28,15 @@ include "config/dbconnection.php";
 <body>
     <?PHP
     if (isset($_SESSION['user-admin'])) {
-        echo "<script>window.location.href = 'adminView/userprofile-table.php'</script>";
-    }
-    elseif(isset($_SESSION['user-counter'])){
+        // echo "<script>window.location.href = 'adminView/userprofile-table.php'</script>";
+        include "adminView/admintable.php";
+    } elseif (isset($_SESSION['user-counter'])) {
         echo "<script>window.location.href = 'counter_billing.php'</script>";
-    } 
-    elseif(isset($_SESSION['user-kitchen'])){
-        echo "<script>window.location.href = 'kitchen_dashboard.php'</script>";
-    }
-    else{
+    } elseif (isset($_SESSION['user-kitchen'])) {
+        echo "<script>window.location.href = 'kitchen.php?refresh=true'</script>";
+    } elseif (isset($_SESSION['waiter'])) {
+        echo "<script>window.location.href = 'waiterresp.php'</script>";
+    } else {
         include_once "adminView/login.php";
     }
     ?>

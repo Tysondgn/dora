@@ -213,7 +213,15 @@ include('../config/dbconnection.php');
                             <tr>
                                 <th>Price</th>
                                 <td>
-                                    <?php echo $row['Price']; ?>
+                                <?php 
+                                    $itemid = $row['ItemID'];
+                                    $Query = "SELECT Price,ItemSize FROM menuitemsprice WHERE ItemID = '$itemid'";
+                                    $priceresult = mysqli_query($conn, $Query);
+                                    while ($pricerow = mysqli_fetch_assoc($priceresult)) {
+                                    echo $pricerow['ItemSize'] . " "; 
+                                    echo "Price : " . $pricerow['Price'] . "<br><br>";
+                                    }
+                                    ?>
                                 </td>
                             </tr>
                             <tr>
